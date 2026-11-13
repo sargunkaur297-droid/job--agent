@@ -1,0 +1,16 @@
+.env
+credentials.json
+token.json
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/debug/
+data/last_digest.html
+resume/*
+!resume/.gitkeep
+data/run.log
+data/run.pid
+data/jobs.db
+data/jobs.db-journal
+config.yaml.bak

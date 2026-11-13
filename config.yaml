@@ -1,0 +1,102 @@
+# Edited via the dashboard Settings tab (you can also edit by hand).
+timezone: Asia/Kolkata
+profile:
+  name: 'sargun '
+  graduation_year: 2027
+  target_roles:
+  - data analyst
+  - data analytics
+  - business analyst
+  - data scientist
+  - data engineer
+  - machine learning
+  - python developer
+  - software engineer
+  - software developer
+  - sde
+  - backend
+  - full stack
+  - fullstack
+  - web developer
+  - frontend
+  - java developer
+  - qa engineer
+  - test engineer
+  - devops
+  - cloud engineer
+  - ai engineer
+  skills: []
+  levels:
+  - intern
+  - internship
+  - trainee
+  - fresher
+  - freshers
+  - graduate
+  - entry level
+  - entry-level
+  - junior
+  - associate
+  - apprentice
+  max_experience_years: 0
+  avoid_title_keywords:
+  - senior
+  - sr
+  - lead
+  - manager
+  - principal
+  - director
+  - architect
+  - head
+  - vp
+  - staff
+  require_level_signal: true
+  notes: ''
+locations:
+- Bengaluru
+- Hyderabad
+- Pune
+- Mumbai
+- Chennai
+- Noida
+- Delhi
+- Gurugram
+- Mohali
+- Remote
+filters:
+  max_age_hours: 24
+  date_policy: allow_unverified
+  unknown_location: keep
+  reject_expired: true
+gmail:
+  lookback_days: 2
+  max_emails_per_source: 200
+  queries:
+    indeed: from:indeed.com newer_than:{days}d
+    linkedin: from:linkedin.com newer_than:{days}d
+    naukri: from:naukri.com newer_than:{days}d
+verification:
+  fetch_pages: true
+  delay_seconds: 1.0
+  timeout: 15
+  max_per_run: 500
+  retries: 1
+  retry_delay_seconds: 4
+  linkedin_guest_fallback: true
+matching:
+  enabled: false
+  provider: gemini
+  model: gemini-2.5-flash
+  min_score_to_shortlist: 0
+  max_jobs_per_run: 60
+  delay_seconds: 4.0
+notifications:
+  send_email: true
+  to: ''
+  mode: last_24h
+  max_jobs_in_digest: 0
+  jobs_per_email: 150
+  send_empty_digest: true
+  show_source_warnings: true
+  show_filtered_out: true
+  filtered_out_max: 60
