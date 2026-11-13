@@ -106,6 +106,22 @@ To try the pipeline with sample data without connecting Gmail:
 python -m app.run_daily --demo
 ```
 
+## Deploy the public demo on Streamlit Community Cloud
+
+The repository includes a separate, privacy-safe demo entry point: `streamlit_app.py`. It uses only the bundled synthetic sample emails and an in-memory SQLite database. It does not request Gmail access, read a personal resume, send email, or require API keys.
+
+1. Push the latest `main` branch to GitHub.
+2. Open [Streamlit Community Cloud](https://share.streamlit.io/) and sign in with GitHub.
+3. Choose **Create app** and select:
+   - Repository: `sargunkaur297-droid/job--agent`
+   - Branch: `main`
+   - Main file path: `streamlit_app.py`
+4. Select **Deploy**.
+
+No Streamlit secrets need to be added for this public demo. The sample database is in memory and resets when the app process restarts. The sample job listings and companies are illustrative, not live vacancies.
+
+**Important:** do not deploy `dashboard.py` publicly for personal use as-is. That is the full local dashboard and includes personal settings, resume upload and desktop Gmail OAuth controls. Its SQLite database is local and is not durable on Streamlit Community Cloud. Hosting the personal Gmail workflow requires a web-compatible OAuth flow and private persistent storage first.
+
 ## Tests
 
 Run the automated test suite:
