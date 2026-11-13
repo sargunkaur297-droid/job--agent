@@ -47,7 +47,7 @@ cd job--agent
 
 python -m venv .venv
 # Windows
-.venv\Scripts\activate
+.venv\\Scripts\\activate
 # macOS / Linux
 source .venv/bin/activate
 
@@ -106,21 +106,14 @@ To try the pipeline with sample data without connecting Gmail:
 python -m app.run_daily --demo
 ```
 
-## Deploy the public demo on Streamlit Community Cloud
+## Streamlit demos
 
-The repository includes a separate, privacy-safe demo entry point: `streamlit_app.py`. It uses only the bundled synthetic sample emails and an in-memory SQLite database. It does not request Gmail access, read a personal resume, send email, or require API keys.
+- **[Public demo](https://job--agent-cw5vzceqddihskggqdgpde.streamlit.app/)** — uses synthetic sample emails and an in-memory SQLite database. It does not request Gmail access, read a personal resume, send email, or require API keys.
+- **[Private personal dashboard](https://job--agent-xw4c4mky9w64qqfxqzat6h.streamlit.app/)** — password-protected entry point for the owner's personal dashboard. Access requires the password; do not share it.
 
-1. Push the latest `main` branch to GitHub.
-2. Open [Streamlit Community Cloud](https://share.streamlit.io/) and sign in with GitHub.
-3. Choose **Create app** and select:
-   - Repository: `sargunkaur297-droid/job--agent`
-   - Branch: `main`
-   - Main file path: `streamlit_app.py`
-4. Select **Deploy**.
+The public demo is deployed from `main` using `streamlit_app.py`. The private dashboard is deployed separately using `private_app.py` from the `private-personal-dashboard` branch. Keep personal information and credentials in Streamlit Secrets or private storage, never in this public repository.
 
-No Streamlit secrets need to be added for this public demo. The sample database is in memory and resets when the app process restarts. The sample job listings and companies are illustrative, not live vacancies.
-
-**Important:** do not deploy `dashboard.py` publicly for personal use as-is. That is the full local dashboard and includes personal settings, resume upload and desktop Gmail OAuth controls. Its SQLite database is local and is not durable on Streamlit Community Cloud. Hosting the personal Gmail workflow requires a web-compatible OAuth flow and private persistent storage first.
+The sample job listings and companies in the public demo are illustrative, not live vacancies.
 
 ## Tests
 
@@ -182,6 +175,5 @@ If a secret has ever been committed, removing it from the latest version is not 
 - Email templates can change, so individual parsers may need maintenance.
 - Job sites may block automated verification or require a sign-in.
 - Gemini scoring is optional; the local matcher is available as a fallback.
-- The dashboard currently uses a local SQLite database. Streamlit Community Cloud's local filesystem is not suitable for durable personal records.
-- The Gmail setup described above uses a desktop OAuth flow. A hosted deployment needs a web-compatible OAuth flow and secure persistent storage before it should handle personal Gmail or job-search data.
-
+- The local dashboard uses SQLite; the hosted private dashboard is configured to use Supabase PostgreSQL for persistent records.
+- The hosted dashboard's Gmail connection and personal-data storage should be validated with the owner's own account before relying on it for ongoing job tracking.
