@@ -32,6 +32,12 @@ if not signed_in_email or signed_in_email != allowed_email:
     st.button("Sign out", on_click=st.logout)
     st.stop()
 
+db_url = str(st.secrets.get("database", {}).get("url", "")).strip()
+if not db_url:
+    st.error("Database is not configured. Add [database].url to Streamlit secrets.")
+    st.stop()
+os.environ["JOB_AGENT_DATABASE_URL"] = db_url
+
 # dashboard.py remains directly runnable locally. This flag prevents it from
 # attempting to set page configuration a second time when loaded here.
 os.environ["JOB_AGENT_AUTHENTICATED"] = "1"
