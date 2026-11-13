@@ -1,15 +1,15 @@
-name: Daily job scan
+name: Manual job scan
 
 on:
-  schedule:
-    - cron: "30 3 * * *"     # 09:00 IST every day (GitHub uses UTC; may start a few minutes late)
   workflow_dispatch: {}
 
-concurrency: job-agent
-
+# This public repository must never store personal job history in a Git branch or Actions cache.
+# Runs are manual until a private persistent database is configured.
 permissions:
-  contents: write            # lets the run save the database to the `job-data` branch
-  issues: write              # lets the run open an alert issue when it fails
+  contents: read
+  issues: write
+
+concurrency: job-agent
 
 jobs:
   run:
@@ -22,60 +22,17 @@ jobs:
           python-version: "3.11"
           cache: pip
       - run: pip install -r requirements.txt
-
-      # Backup copy of the database (cache). The `job-data` branch below is the main store.
-      - name: Restore database (cache)
-        uses: actions/cache/restore@v4
-        with:
-          path: data/jobs.db
-          key: jobs-db-${{ github.run_id }}
-          restore-keys: jobs-db-
-
-      # Main store: a one-commit branch holding jobs.db. It never expires, unlike the cache.
-      - name: Restore database (job-data branch)
-        run: |
-          mkdir -p data
-          if git ls-remote --exit-code --heads origin job-data >/dev/null 2>&1; then
-            git fetch --depth=1 origin job-data
-            git show FETCH_HEAD:jobs.db > data/jobs.db.tmp && mv data/jobs.db.tmp data/jobs.db || rm -f data/jobs.db.tmp
-          fi
-
-      - name: Run pipeline
+      - name: Run pipeline (temporary database; no personal data is committed)
         env:
           GMAIL_TOKEN_JSON: ${{ secrets.GMAIL_TOKEN_JSON }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           RESUME_TEXT: ${{ secrets.RESUME_TEXT }}
         run: python -m app.run_daily
-
-      - name: Save database (cache)
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: data/jobs.db
-          key: jobs-db-${{ github.run_id }}
-
-      - name: Save database (job-data branch)
-        if: always()
-        run: |
-          [ -f data/jobs.db ] || exit 0
-          rm -rf /tmp/store && mkdir /tmp/store && cp data/jobs.db /tmp/store/jobs.db
-          cd /tmp/store
-          git init -q -b job-data
-          git config user.name "job-agent"
-          git config user.email "job-agent@users.noreply.github.com"
-          git add jobs.db
-          git commit -q -m "database snapshot $(date -u +%FT%TZ)"
-          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" job-data
-
-      # A failed run (most often: Gmail login expired) opens an issue, which also emails you.
       - name: Alert on failure
         if: failure()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          open=$(gh issue list --repo "${{ github.repository }}" --state open --search "Job Agent run failed in:title" --json number -q '.[0].number')
-          if [ -z "$open" ]; then
-            gh issue create --repo "${{ github.repository }}" \
-              --title "Job Agent run failed" \
-              --body "The daily scan failed, so no job email was sent. Most likely cause: the Gmail login expired. Run 'python scripts/setup_gmail_auth.py' locally and update the GMAIL_TOKEN_JSON secret with the new token.json. Run log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          fi
+          gh issue create --repo "${{ github.repository }}" \
+            --title "Job Agent run failed" \
+            --body "The manual job scan failed. Check the Actions run log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
