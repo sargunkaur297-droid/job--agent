@@ -1,16 +1,30 @@
+# Secrets and local configuration
 .env
+.env.*
+!.env.example
+.streamlit/secrets.toml
 credentials.json
 token.json
+*.pem
+*.key
+
+# Local Python environment and caches
 .venv/
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
-data/debug/
-data/last_digest.html
+
+# Personal data: databases, logs, resumes and debug output
+data/*
+!data/.gitkeep
+*.db
+*.db-*
 resume/*
 !resume/.gitkeep
+data/debug/
+data/last_digest.html
 data/run.log
 data/run.pid
-data/jobs.db
-data/jobs.db-journal
+
+# Local backups
 config.yaml.bak
