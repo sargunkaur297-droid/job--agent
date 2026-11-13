@@ -44,6 +44,8 @@ class PostgresConnection:
     def __init__(self, dsn: str):
         import psycopg2
         from psycopg2.extras import DictCursor
+        if "sslmode=" not in dsn:
+            dsn += ("&" if "?" in dsn else "?") + "sslmode=require"
         self.raw = psycopg2.connect(dsn, cursor_factory=DictCursor, connect_timeout=15)
         self.raw.autocommit = False
 
