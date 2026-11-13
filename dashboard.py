@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import os
 from zoneinfo import ZoneInfo
 
 import pandas as pd
@@ -11,7 +12,8 @@ import streamlit as st
 from app import db, tracker
 from app.config import load_config
 
-st.set_page_config(page_title="Job Agent", page_icon="🎯", layout="wide")
+if os.getenv("JOB_AGENT_AUTHENTICATED") != "1":
+    st.set_page_config(page_title="Job Agent", page_icon="🎯", layout="wide")
 cfg = load_config()
 TZ = ZoneInfo(cfg["timezone"])
 
