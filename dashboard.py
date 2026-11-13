@@ -50,11 +50,11 @@ def _summary():
     st.markdown("**What is in the database** (pending = collected but not checked yet)")
     st.dataframe(d.pivot_table(index="sources", columns="filter_status", values="n", aggfunc="sum", fill_value=0),
                  width="stretch")
-    st.dataframe(pd.read_sql_query("SELECT link_status AS link_check, COUNT(*) AS jobs FROM jobs GROUP BY 1", conn),
+    st.dataframe(pd.read_sql_query("SELECT link_status AS link_check, COUNT(*) AS jobs FROM jobs GROUP BY 1", getattr(conn, 'raw', conn)),
                  hide_index=True)
     all_df = pd.read_sql_query(
         "SELECT id,title,company,location,sources,posted_hint,posted_at,date_confidence,link_status,"
-        "filter_status,filter_reason,match_score,match_verdict,url FROM jobs ORDER BY match_score DESC", conn)
+        "filter_status,filter_reason,match_score,match_verdict,url FROM jobs ORDER BY match_score DESC", getattr(conn, 'raw', conn))
     st.download_button("⬇ Download all jobs (CSV)", all_df.to_csv(index=False).encode("utf-8"),
                        "jobs.csv", "text/csv")
 
@@ -244,7 +244,7 @@ def render_settings():
 def load_jobs() -> pd.DataFrame:
     df = pd.read_sql_query(
         """SELECT j.*, a.status AS app_status, a.applied_date, a.notes AS app_notes
-           FROM jobs j LEFT JOIN applications a ON a.job_id=j.id""", conn)
+           FROM jobs j LEFT JOIN applications a ON a.job_id=j.id""", getattr(conn, 'raw', conn))
     if df.empty:
         return df
     for c in ("first_seen", "posted_at"):
